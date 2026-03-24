@@ -1,0 +1,48 @@
+<main class="main-container">
+  <div class="card">
+    <header class="card-header">
+      <h1>Tu MergePDF</h1>
+      <p>Une múltiples archivos PDF fácil y rápido</p>
+    </header>
+
+    <section class="upload-section" [class.drag-over]="isDragOver()" (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+      <label for="pdf-upload" class="upload-btn">
+        <span>Seleccionar PDFs o Arrastrar Aquí</span>
+        <input id="pdf-upload" type="file" multiple accept="application/pdf" (change)="onFilesSelected($event)" hidden>
+      </label>
+    </section>
+
+    <div class="list-container" *ngIf="pdfFiles().length > 0">
+      <ul class="file-list">
+        <li class="list-item" *ngFor="let file of pdfFiles(); let i = index">
+          <span class="file-name">{{ file.name }}</span>
+          <div class="actions">
+            <button class="icon-btn" (click)="moveFileUp(i)" [disabled]="i === 0" title="Subir">▲</button>
+            <button class="icon-btn" (click)="moveFileDown(i)" [disabled]="i === pdfFiles().length - 1"
+              title="Bajar">▼</button>
+            <button class="icon-btn danger" (click)="removeFile(i)" title="Eliminar">✖</button>
+          </div>
+        </li>
+      </ul>
+
+      <button class="action-btn" (click)="generatePreview()" [disabled]="pdfFiles().length < 2 || isMerging()">
+        {{ isMerging() ? 'Generando...' : 'Generar Vista Previa' }}
+      </button>
+    </div>
+
+    <div class="preview-section" *ngIf="safePreviewUrl()">
+      <div class="preview-header">
+        <h2>Vista Previa</h2>
+        <button class="action-btn download-btn" (click)="downloadPdf()">
+          Descargar PDF
+        </button>
+      </div>
+      <iframe [src]="safePreviewUrl()" class="preview-frame" title="PDF Preview"></iframe>
+    </div>
+
+    <div class="empty-state" *ngIf="pdfFiles().length === 0">
+      <p>Aún no has seleccionado ningún archivo PDF.</p>
+    </div>
+  </div>
+</main>
